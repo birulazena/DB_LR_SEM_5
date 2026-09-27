@@ -1,0 +1,96 @@
+<mxfile host="65bd71144e">
+    <diagram id="normalized_schema" name="Normalized Schema 3NF">
+        <mxGraphModel dx="1329" dy="1009" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="u1" value="&lt;b style=&quot;font-size: 13px;&quot;&gt;users&lt;/b&gt;&lt;hr/&gt;&lt;div style=&quot;text-align: left; padding: 2px;&quot;&gt;&lt;b&gt;id&lt;/b&gt;: UUID [PK]&lt;br/&gt;&lt;b&gt;email&lt;/b&gt;: VARCHAR(150) [UQ]&lt;br/&gt;password_hash: VARCHAR(255)&lt;br/&gt;is_active: BOOLEAN&lt;br/&gt;is_deleted: BOOLEAN&lt;br/&gt;created_at: TIMESTAMPTZ&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=4;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="80" width="220" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="u2" value="&lt;b style=&quot;font-size: 13px;&quot;&gt;user_profiles&lt;/b&gt;&lt;hr/&gt;&lt;div style=&quot;text-align: left; padding: 2px;&quot;&gt;&lt;b&gt;id&lt;/b&gt;: UUID [PK]&lt;br/&gt;&lt;b&gt;user_id&lt;/b&gt;: UUID [FK, UQ]&lt;br/&gt;first_name: VARCHAR(100)&lt;br/&gt;last_name: VARCHAR(100)&lt;br/&gt;phone: VARCHAR(30) [UQ]&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;spacingTop=4;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="300" width="220" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="u3" value="&lt;b style=&quot;font-size: 13px;&quot;&gt;user_roles&lt;/b&gt;&lt;hr/&gt;&lt;div style=&quot;text-align: left; padding: 2px;&quot;&gt;&lt;b&gt;user_id&lt;/b&gt;: UUID [PK, FK]&lt;br/&gt;&lt;b&gt;role_id&lt;/b&gt;: UUID [PK, FK]&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=top;fillColor=#e1d5e7;strokeColor=#9673a6;spacingTop=4;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="80" width="180" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="u4" value="&lt;b style=&quot;font-size: 13px;&quot;&gt;roles&lt;/b&gt;&lt;hr/&gt;&lt;div style=&quot;text-align: left; padding: 2px;&quot;&gt;&lt;b&gt;id&lt;/b&gt;: UUID [PK]&lt;br/&gt;&lt;b&gt;name&lt;/b&gt;: VARCHAR(50) [UQ]&lt;br/&gt;description: VARCHAR(255)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=top;fillColor=#e1d5e7;strokeColor=#9673a6;spacingTop=4;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="620" y="80" width="180" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="u5" value="&lt;b style=&quot;font-size: 13px;&quot;&gt;role_permissions&lt;/b&gt;&lt;hr/&gt;&lt;div style=&quot;text-align: left; padding: 2px;&quot;&gt;&lt;b&gt;role_id&lt;/b&gt;: UUID [PK, FK]&lt;br/&gt;&lt;b&gt;permission_id&lt;/b&gt;: UUID [PK, FK]&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=top;fillColor=#e1d5e7;strokeColor=#9673a6;spacingTop=4;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="880" y="80" width="190" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="u6" value="&lt;b style=&quot;font-size: 13px;&quot;&gt;permissions&lt;/b&gt;&lt;hr/&gt;&lt;div style=&quot;text-align: left; padding: 2px;&quot;&gt;&lt;b&gt;id&lt;/b&gt;: UUID [PK]&lt;br/&gt;&lt;b&gt;code&lt;/b&gt;: VARCHAR(100) [UQ]&lt;br/&gt;description: VARCHAR(255)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=top;fillColor=#e1d5e7;strokeColor=#9673a6;spacingTop=4;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="1140" y="80" width="200" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="u7" value="&lt;b style=&quot;font-size: 13px;&quot;&gt;warehouses&lt;/b&gt;&lt;hr/&gt;&lt;div style=&quot;text-align: left; padding: 2px;&quot;&gt;&lt;b&gt;id&lt;/b&gt;: UUID [PK]&lt;br/&gt;name: VARCHAR(100)&lt;br/&gt;address: VARCHAR(255)&lt;br/&gt;is_deleted: BOOLEAN&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=top;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=4;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="295" width="200" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="u8" value="&lt;b style=&quot;font-size: 13px;&quot;&gt;vehicles&lt;/b&gt;&lt;hr/&gt;&lt;div style=&quot;text-align: left; padding: 2px;&quot;&gt;&lt;b&gt;id&lt;/b&gt;: UUID [PK]&lt;br/&gt;&lt;b&gt;license_plate&lt;/b&gt;: VARCHAR(20) [UQ]&lt;br/&gt;model: VARCHAR(100)&lt;br/&gt;max_weight_kg: NUMERIC(10,2)&lt;br/&gt;current_warehouse_id: UUID [FK]&lt;br/&gt;is_deleted: BOOLEAN&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;spacingTop=4;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="280" width="230" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="u9" value="&lt;b style=&quot;font-size: 13px;&quot;&gt;orders&lt;/b&gt;&lt;hr/&gt;&lt;div style=&quot;text-align: left; padding: 2px;&quot;&gt;&lt;b&gt;id&lt;/b&gt;: UUID [PK]&lt;br/&gt;&lt;b&gt;order_number&lt;/b&gt;: VARCHAR(50) [UQ]&lt;br/&gt;customer_id: UUID [FK]&lt;br/&gt;origin_warehouse_id: UUID [FK]&lt;br/&gt;destination_warehouse_id: UUID [FK]&lt;br/&gt;total_cost: NUMERIC(10,2)&lt;br/&gt;status: VARCHAR(30)&lt;br/&gt;is_deleted: BOOLEAN&lt;br/&gt;created_at: TIMESTAMPTZ&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=top;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=4;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="490" width="250" height="190" as="geometry"/>
+                </mxCell>
+                <mxCell id="u10" value="&lt;b style=&quot;font-size: 13px;&quot;&gt;cargo_items&lt;/b&gt;&lt;hr/&gt;&lt;div style=&quot;text-align: left; padding: 2px;&quot;&gt;&lt;b&gt;id&lt;/b&gt;: UUID [PK]&lt;br/&gt;order_id: UUID [FK]&lt;br/&gt;name: VARCHAR(150)&lt;br/&gt;quantity: INT&lt;br/&gt;weight_kg: NUMERIC(10,2)&lt;br/&gt;volume_m3: NUMERIC(10,3)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=top;fillColor=#d5e8d4;strokeColor=#82b366;spacingTop=4;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="760" width="220" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="u11" value="&lt;b style=&quot;font-size: 13px;&quot;&gt;shipments&lt;/b&gt;&lt;hr/&gt;&lt;div style=&quot;text-align: left; padding: 2px;&quot;&gt;&lt;b&gt;id&lt;/b&gt;: UUID [PK]&lt;br/&gt;&lt;b&gt;shipment_code&lt;/b&gt;: VARCHAR(50) [UQ]&lt;br/&gt;vehicle_id: UUID [FK]&lt;br/&gt;driver_id: UUID [FK]&lt;br/&gt;status: VARCHAR(30)&lt;br/&gt;planned_arrival: TIMESTAMPTZ&lt;br/&gt;is_deleted: BOOLEAN&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;spacingTop=4;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="770" y="490" width="230" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="u12" value="&lt;b style=&quot;font-size: 13px;&quot;&gt;shipment_orders&lt;/b&gt;&lt;hr/&gt;&lt;div style=&quot;text-align: left; padding: 2px;&quot;&gt;&lt;b&gt;id&lt;/b&gt;: UUID [PK]&lt;br/&gt;shipment_id: UUID [FK]&lt;br/&gt;order_id: UUID [FK]&lt;br/&gt;is_delivered: BOOLEAN&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=top;fillColor=#ffe6cc;strokeColor=#d79b00;spacingTop=4;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="770" y="730" width="210" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="u13" value="&lt;b style=&quot;font-size: 13px;&quot;&gt;audit_logs&lt;/b&gt;&lt;hr/&gt;&lt;div style=&quot;text-align: left; padding: 2px;&quot;&gt;&lt;b&gt;id&lt;/b&gt;: UUID [PK]&lt;br/&gt;user_id: UUID [FK]&lt;br/&gt;action: VARCHAR(50)&lt;br/&gt;entity_name: VARCHAR(50)&lt;br/&gt;entity_id: UUID&lt;br/&gt;details: VARCHAR(255)&lt;br/&gt;created_at: TIMESTAMPTZ&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=top;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;spacingTop=4;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="520" width="220" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" value="1 : 1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeWidth=2;strokeColor=#6c8ebf;" parent="1" source="u1" target="u2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2" value="1 : M" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.3;entryX=0;entryY=0.5;strokeWidth=2;strokeColor=#9673a6;" parent="1" source="u1" target="u3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3" value="1 : M" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;strokeWidth=2;strokeColor=#9673a6;" parent="1" source="u4" target="u3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e4" value="1 : M" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=2;strokeColor=#9673a6;" parent="1" source="u4" target="u5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e5" value="1 : M" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;strokeWidth=2;strokeColor=#9673a6;" parent="1" source="u6" target="u5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e6" value="1 : M" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.2;exitY=1;entryX=0.2;entryY=0;strokeWidth=2;strokeColor=#666666;" parent="1" source="u1" target="u13" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e7" value="1 : M (customer)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.8;entryX=0;entryY=0.3;strokeWidth=2;strokeColor=#82b366;" parent="1" source="u1" target="u9" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e8" value="1 : M (driver)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.7;exitY=1;entryX=0.3;entryY=0;strokeWidth=2;strokeColor=#d6b656;" parent="1" source="u1" target="u11" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="214" y="250"/>
+                            <mxPoint x="839" y="250"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e9" value="1 : M" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=2;strokeColor=#d6b656;" parent="1" source="u7" target="u8" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e10" value="1 : M (warehouses)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeWidth=2;strokeColor=#82b366;" parent="1" source="u7" target="u9" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e11" value="1 : M" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeWidth=2;strokeColor=#82b366;" parent="1" source="u9" target="u10" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e12" value="1 : M" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.7;exitY=1;entryX=0.5;entryY=0;strokeWidth=2;strokeColor=#d6b656;" parent="1" source="u8" target="u11" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e13" value="1 : M" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeWidth=2;strokeColor=#d79b00;" parent="1" source="u11" target="u12" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e14" value="1 : M" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.8;entryX=0;entryY=0.5;strokeWidth=2;strokeColor=#d79b00;" parent="1" source="u9" target="u12" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
