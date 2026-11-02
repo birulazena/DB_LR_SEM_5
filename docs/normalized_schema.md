@@ -9,7 +9,7 @@
 
 ### 1. `users` (Учетные записи)
 * `id` (UUID, PK) — первичный ключ.
-* `email` (VARCHAR(150), UNIQUE, NOT NULL) — логин.
+* `email` (VARCHAR(150), NOT NULL) — логин.
 * `password_hash` (VARCHAR(255), NOT NULL) — хэш пароля.
 * `is_active` (BOOLEAN, NOT NULL, DEFAULT true) — статус блокировки.
 * `is_deleted` (BOOLEAN, NOT NULL, DEFAULT false) — флаг мягкого удаления.
@@ -20,7 +20,8 @@
 * `user_id` (UUID, UNIQUE, NOT NULL, FK -> `users.id`) — ссылка на пользователя.
 * `first_name` (VARCHAR(100), NOT NULL) — имя.
 * `last_name` (VARCHAR(100), NOT NULL) — фамилия.
-* `phone` (VARCHAR(30), UNIQUE, NOT NULL) — телефон.
+* `phone` (VARCHAR(30), NOT NULL) — телефон.
+* `is_deleted` (BOOLEAN, NOT NULL, DEFAULT false) — флаг мягкого удаления
 > **Тип связи:** 1:1 с таблицей `users` (обеспечивается `UNIQUE` на `user_id`).
 
 ### 3. `roles` (Роли-контейнеры)
@@ -53,7 +54,7 @@
 
 ### 8. `vehicles` (Транспортные средства)
 * `id` (UUID, PK) — первичный ключ.
-* `license_plate` (VARCHAR(20), UNIQUE, NOT NULL) — госномер.
+* `license_plate` (VARCHAR(20), NOT NULL) — госномер.
 * `model` (VARCHAR(100), NOT NULL) — марка и модель.
 * `max_weight_kg` (NUMERIC(10, 2), NOT NULL) — грузоподъемность.
 * `current_warehouse_id` (UUID, NULL, FK -> `warehouses.id`) — текущий склад базирования.
@@ -132,12 +133,9 @@
 ### 3.1. Автоматические индексы СУБД
 * **Первичные ключи:** автоматически создаются для всех 13 таблиц по полю `id` (или составному ключу связующих таблиц).
 * **Ограничения уникальности:**
-   * `users(email)`
    * `user_profiles(user_id)` *(гарантирует связь 1:1)*
-   * `user_profiles(phone)`
    * `roles(name)`
    * `permissions(code)`
-   * `vehicles(license_plate)`
    * `orders(order_number)`
    * `shipments(shipment_code)`
    * `shipment_orders(shipment_id, order_id)`
@@ -146,15 +144,15 @@
 
 ### 3.2. Обязательные пользовательские индексы для внешних ключей
 
-1. **`idx_vehicles_current_warehouse_id`** на `vehicles(current_warehouse_id)` — быстрый поиск автопарка, приписанного к складу.
-2. **`idx_orders_customer_id`** на `orders(customer_id)` — выборка заказов конкретного клиента в личном кабинете.
-3. **`idx_orders_origin_warehouse_id`** на `orders(origin_warehouse_id)` — логистика отправления со склада.
-4. **`idx_orders_destination_warehouse_id`** на `orders(destination_warehouse_id)` — логистика прибытия на склад.
-5. **`idx_cargo_items_order_id`** на `cargo_items(order_id)` — получение состава груза при просмотре заказа (`JOIN orders -> cargo_items`).
-6. **`idx_shipments_vehicle_id`** на `shipments(vehicle_id)` — история рейсов автомобиля.
-7. **`idx_shipments_driver_id`** на `shipments(driver_id)` — путевые листы конкретного водителя.
-8. **`idx_shipment_orders_order_id`** на `shipment_orders(order_id)` — обратный поиск: в какой рейс включен конкретный заказ. *(Примечание: поиск по `shipment_id` уже ускорен за счет уникального составного ограничения).*
-9. **`idx_audit_logs_user_id`** на `audit_logs(user_id)` — журнал действий конкретного пользователя.
+1.**`idx_orders_customer_id`** на `orders(customer_id)` — выборка заказов конкретного клиента в личном кабинете.
+2.**`idx_orders_origin_warehouse_id`** на `orders(origin_warehouse_id)` — логистика отправления со склада.
+3.**`idx_orders_destination_warehouse_id`** на `orders(destination_warehouse_id)` — логистика прибытия на склад.
+4.**`idx_cargo_items_order_id`** на `cargo_items(order_id)` — получение состава груза при просмотре заказа (`JOIN orders -> cargo_items`).
+5.**`idx_shipments_vehicle_id`** на `shipments(vehicle_id)` — история рейсов автомобиля.
+6.**`idx_shipments_driver_id`** на `shipments(driver_id)` — путевые листы конкретного водителя.
+7.**`idx_shipment_orders_order_id`** на `shipment_orders(order_id)` — обратный поиск: в какой рейс включен конкретный заказ. *(Примечание: поиск по `shipment_id` уже ускорен за счет уникального составного ограничения).*
+8.**`idx_audit_logs_user_id`** на `audit_logs(user_id)` — журнал действий конкретного пользователя.
+9.**`idx_user_roles_role_id`** на `user_roles(role_id)` — быстрое получение пользователей по роли.
 
 ---
 
@@ -163,10 +161,59 @@
 
 1. **`idx_orders_status_active`:**
    * `CREATE INDEX idx_orders_status_active ON orders(status) WHERE is_deleted = false;`
-   * *Обоснование:* 99% оперативных запросов диспетчера ищут активные заказы по статусу. Удаленные закалы исключаются из индекса, экономя память RAM (Buffer Cache).
+   * *Обоснование:* 99% оперативных запросов диспетчера ищут активные заказы по статусу. Удаленные заказы исключаются из индекса, экономя память RAM (Buffer Cache).
 2. **`idx_audit_logs_entity`:**
    * `CREATE INDEX idx_audit_logs_entity ON audit_logs(entity_name, entity_id);`
    * *Обоснование:* Просмотр истории изменений конкретного объекта (например, история заказа `entity_name = 'orders' AND entity_id = '...'`).
 3. **`idx_audit_logs_created_at`:**
    * `CREATE INDEX idx_audit_logs_created_at ON audit_logs(created_at DESC);`
    * *Обоснование:* Сортировка ленты аудита от самых свежих событий к старым.
+4. **`idx_users_unique_active_email`:**
+    * `CREATE UNIQUE INDEX idx_users_unique_active_email ON users(email) WHERE is_deleted = false;`
+    * *Обоснование:* Поддержка Soft Delete: позволяет повторную регистрацию на тот же email после удаления.
+5. **`idx_profiles_unique_active_phone`:**
+    * `CREATE UNIQUE INDEX idx_profiles_unique_active_phone ON user_profiles(phone) WHERE is_deleted = false;`
+6. **`idx_users_created_at_desc`:**
+    * `CREATE INDEX idx_users_created_at_desc ON users(created_at DESC) WHERE is_deleted = false;`
+    * *Обоснование:* Устраняет файловую сортировку при пагинации пользователей в админке.
+7. **GIN-индексы поиска (расширение `pg_trgm`):**
+    * `CREATE EXTENSION IF NOT EXISTS pg_trgm;`
+    * Поиск по email: `idx_users_email_trgm ON users USING gin (email gin_trgm_ops) WHERE is_deleted = false;`
+    * Поиск по ФИО: `idx_profiles_names_trgm ON user_profiles USING gin (first_name gin_trgm_ops, last_name gin_trgm_ops) WHERE is_deleted = false;`
+    * Поиск по телефону: `idx_profiles_phone_trgm ON user_profiles USING gin (phone gin_trgm_ops) WHERE is_deleted = false;`
+8. **`idx_warehouses_active_name_id`**:
+    * `CREATE INDEX idx_warehouses_active_name_id ON warehouses(name ASC, id ASC) WHERE is_deleted = false;`
+    * *Обоснование:* Обеспечивает индексное сканирование (Index Scan) при постраничной выборке складов по названию с детерминированным тай-брейкером `id` без затратной операции сортировки в памяти (Sort Node).
+9. **`idx_vehicles_active_filters`**:
+    * `CREATE INDEX idx_vehicles_active_filters ON vehicles(current_warehouse_id, max_weight_kg) WHERE is_deleted = false;`
+    * *Обоснование:* Составной индекс для моментальной фильтрации автопарка по складу базирования и минимальной грузоподъемности при планировании рейса.
+10. **GIN-индекс поиска по модели ТС (`pg_trgm`):**
+* `CREATE INDEX idx_vehicles_model_trgm ON vehicles USING gin (model gin_trgm_ops) WHERE is_deleted = false;`
+* *Обоснование:* Поддержка быстрого нечеткого поиска автомобиля по марке/модели диспетчером (`ILIKE '%Volvo%'`).
+11. **`idx_warehouses_unique_active_address`**:
+    * `CREATE UNIQUE INDEX idx_warehouses_unique_active_address ON warehouses(address) WHERE is_deleted = false;`
+    * *Обоснование:* Гарантирует уникальность адресов только среди действующих складов, допуская повторное использование адреса после Soft Delete.
+12. **`idx_vehicles_unique_active_plate`**:
+    * `CREATE UNIQUE INDEX idx_vehicles_unique_active_plate ON vehicles(license_plate) WHERE is_deleted = false;`
+    * *Обоснование:* Обеспечивает уникальность госномера среди активных ТС, допуская повторную регистрацию номера после списания (Soft Delete).
+13. **`idx_vehicles_active_model_id`**:
+    * `CREATE INDEX idx_vehicles_active_model_id ON vehicles(model ASC, id ASC) WHERE is_deleted = false;`
+    * *Обоснование:* B-Tree индекс для детерминированной постраничной выборки (пагинации) автопарка по названию модели и `id`. В отличие от GIN-индекса, позволяет избежать фазы сортировки в памяти (`Sort Node`).
+14. **`idx_orders_created_at_desc`**:
+    * `CREATE INDEX idx_orders_created_at_desc ON orders(created_at DESC) WHERE is_deleted = false;`
+    * *Обоснование:* Устраняет ресурсоемкую операцию сортировки в оперативной памяти (`Sort Node`) при постраничном выводе глобального диспетчерского журнала заказов.
+15. **`idx_orders_customer_active_created`**:
+    * `CREATE INDEX idx_orders_customer_active_created ON orders(customer_id, created_at DESC) WHERE is_deleted = false;`
+    * *Обоснование:* Составной частичный индекс для мгновенной постраничной выборки активных заказов конкретного клиента в личном кабинете без необходимости дополнительной сортировки.
+16. **GIN-индекс поиска по номеру заказа (`pg_trgm`):**
+    * `CREATE INDEX idx_orders_order_number_trgm ON orders USING gin (order_number gin_trgm_ops) WHERE is_deleted = false;`
+    * *Обоснование:* Обеспечивает мгновенный регистронезависимый поиск заказа по неполному трек-номеру или его части (`ILIKE '%2026%'`) в диспетчерском журнале без полного сканирования таблицы (`Seq Scan`).
+17. **`idx_shipments_status_active`**:
+    * `CREATE INDEX idx_shipments_status_active ON shipments(status) WHERE is_deleted = false;`
+    * *Обоснование:* Ускоряет диспетчерскую фильтрацию рейсов по статусам (`PLANNED`, `ON_ROUTE`, `COMPLETED`), исключая мягко удаленные записи из индекса и экономя оперативную память (RAM).
+18. **`idx_shipments_driver_active_arrival`**:
+    * `CREATE INDEX idx_shipments_driver_active_arrival ON shipments(driver_id, planned_arrival ASC) WHERE is_deleted = false;`
+    * *Обоснование:* Составной частичный индекс для мгновенного получения активных путевых листов конкретного водителя с детерминированной сортировкой по дедлайну прибытия без задействования оперативной сортировки (`Sort Node`).
+19. **GIN-индекс поиска по коду рейса (`pg_trgm`):**
+    * `CREATE INDEX idx_shipments_code_trgm ON shipments USING gin (shipment_code gin_trgm_ops) WHERE is_deleted = false;`
+    * *Обоснование:* Обеспечивает быстрый нечеткий регистронезависимый поиск рейса по номеру путевого листа или его части (`ILIKE '%...%'`) в строке поиска диспетчера без сканирования всей таблицы (`Seq Scan`).
